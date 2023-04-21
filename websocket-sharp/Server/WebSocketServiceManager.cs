@@ -62,7 +62,7 @@ namespace WebSocketSharp.Server
       _keepClean = true;
       _state = ServerState.Ready;
       _sync = ((ICollection) _hosts).SyncRoot;
-      _waitTime = TimeSpan.FromSeconds (1);
+      _waitTime = TimeSpan.FromSeconds (5);
     }
 
     #endregion

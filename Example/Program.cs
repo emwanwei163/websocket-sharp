@@ -52,7 +52,7 @@ namespace Example
         ws.Log.Level = LogLevel.Trace;
 
         // To change the wait time for the response to the Ping or Close.
-        //ws.WaitTime = TimeSpan.FromSeconds (10);
+        //ws.WaitTime = TimeSpan.FromSeconds (2);
 
         // To emit a WebSocket.OnMessage event when receives a ping.
         //ws.EmitOnPing = true;

@@ -177,7 +177,7 @@ namespace WebSocketSharp
       _message = messages;
       _secure = context.IsSecureConnection;
       _stream = context.Stream;
-      _waitTime = TimeSpan.FromSeconds (1);
+      _waitTime = TimeSpan.FromSeconds (5);
 
       init ();
     }
@@ -193,7 +193,7 @@ namespace WebSocketSharp
       _message = messages;
       _secure = context.IsSecureConnection;
       _stream = context.Stream;
-      _waitTime = TimeSpan.FromSeconds (1);
+      _waitTime = TimeSpan.FromSeconds (5);
 
       init ();
     }
@@ -1755,8 +1755,6 @@ namespace WebSocketSharp
 
     private bool processPingFrame (WebSocketFrame frame)
     {
-      _log.Trace ("A ping was received.");
-
       var pong = WebSocketFrame.CreatePongFrame (frame.PayloadData, _client);
 
       lock (_forState) {
@@ -1773,8 +1771,6 @@ namespace WebSocketSharp
           return false;
       }
 
-      _log.Trace ("A pong to this ping has been sent.");
-
       if (_emitOnPing) {
         if (_client)
           pong.Unmask ();
@@ -1789,8 +1785,6 @@ namespace WebSocketSharp
 
     private bool processPongFrame (WebSocketFrame frame)
     {
-      _log.Trace ("A pong was received.");
-
       try {
         _pongReceived.Set ();
       }
@@ -1800,8 +1794,6 @@ namespace WebSocketSharp
       catch (ObjectDisposedException) {
         return false;
       }
-
-      _log.Trace ("It has been signaled.");
 
       return true;
     }
@@ -2514,7 +2506,7 @@ namespace WebSocketSharp
                      : false;
 
       var res = sent && received;
-
+            
       var msg = String.Format (
                   "The closing was clean? {0} (sent: {1} received: {2})",
                   res,
