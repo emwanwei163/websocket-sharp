@@ -31,9 +31,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Timers;
+using WebSocketSharp.Net;
 
 namespace WebSocketSharp.Server
 {
@@ -58,6 +57,8 @@ namespace WebSocketSharp.Server
     private System.Timers.Timer                   _sweepTimer;
     private object                                _sync;
     private TimeSpan                              _waitTime;
+    private WebsocketStatsManager                 _statsManager;
+
 
     #endregion
 
@@ -82,6 +83,7 @@ namespace WebSocketSharp.Server
       _state = ServerState.Ready;
       _sync = ((ICollection) _sessions).SyncRoot;
       _waitTime = TimeSpan.FromSeconds (5);
+      _statsManager = new WebsocketStatsManager(log);
 
       setSweepTimer (180000);
     }
@@ -460,7 +462,7 @@ namespace WebSocketSharp.Server
 
     #region Internal Methods
 
-    internal string Add (IWebSocketSession session)
+    internal string Add (IWebSocketSession session, string ipAddress)
     {
       lock (_sync) {
         if (_state != ServerState.Start)
@@ -470,8 +472,9 @@ namespace WebSocketSharp.Server
 
         _sessions.Add (id, session);
 
-        _log.Trace($"Adding new socket session with ID - {id}");
-
+        _log.Trace($"Adding new socket session for IP {ipAddress} -  {id}");
+        _statsManager.AddUniqueConnection(ipAddress);
+        
         return id;
       }
     }
@@ -1554,9 +1557,7 @@ namespace WebSocketSharp.Server
         _sweeping = true;
       }
 
-      var connectedSessions = IDs.ToArray();
-      if(connectedSessions.Length > 0) 
-        _log.Trace($"Connected sessions: {string.Join(",", connectedSessions)}");
+      _log.Trace($"Number of connected sessions - {IDs.Count()}");
 
       foreach (var id in InactiveIDs) {
         if (_state != ServerState.Start)

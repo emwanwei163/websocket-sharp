@@ -511,7 +511,7 @@ namespace WebSocketSharp.Server
 
     private void onOpen (object sender, EventArgs e)
     {
-      _id = _sessions.Add (this);
+      _id = _sessions.Add (this, UserEndPoint?.Address?.ToString());
 
       if (_id == null) {
         _websocket.Close (CloseStatusCode.Away);
